@@ -1,3 +1,4 @@
+
 import math
 from flask import Flask, render_template, request, flash
 
@@ -39,7 +40,7 @@ def index():
             # 2. Calcular la base para impuestos:
             # Base = Precio Inicial + Tax 7% (si se aplica) + Envío USA a Paquetería
             base_impuesto = precio_inicial + tax7 + envio_usa
-
+            
             # 3. Impuesto del 24% se aplica solo si la base supera 200 USD
             additional_tax = base_impuesto * 0.24 if base_impuesto > 200 else 0
 
@@ -65,28 +66,29 @@ def index():
             # 6. Aplicar IGV del 18%
             final_price = subtotal * 1.18
 
-            # Preparar el desglose en HTML
+            # Formatear el resultado como HTML para mostrar detalles
             result = f"""
-            <h2>Resumen del Cálculo</h2>
-            <strong>Precio Inicial:</strong> ${precio_inicial:.2f}<br>
-            <strong>Tax 7% (opcional):</strong> ${tax7:.2f}<br>
-            <strong>Envío USA a Paquetería:</strong> ${envio_usa:.2f}<br>
+            <h3>Desglose de Costos:</h3>
+            <p>Precio Inicial: ${precio_inicial:.2f} USD</p>
+            
+            {'<p>Tax 7%: $'+str(tax7)+'</p>' if form_data["aplicar_tax7"] else ''}
+            
+            <p>Envío USA a Paquetería: ${envio_usa:.2f} USD</p>
+            <p>Base para impuestos: ${base_impuesto:.2f} USD</p>
+            
+            {'<p>Impuesto 24% (base > $200): $'+f"{additional_tax:.2f}"+' USD</p>' if base_impuesto > 200 else ''}
+            
+            <p>Envío a Perú (Peso: {peso:.2f} kg): ${envio_peru_base:.2f} USD</p>
             <hr>
-            <strong>Base para impuestos:</strong> ${base_impuesto:.2f}<br>
-            <strong>Impuesto 24% (si base >200 USD):</strong> ${additional_tax:.2f}<br>
-            <hr>
-            <strong>Envío a Perú (según peso {peso:.2f} kg):</strong> ${envio_peru_base:.2f}<br>
-            <hr>
-            <strong>Subtotal (sin IGV):</strong> ${subtotal:.2f}<br>
-            <strong>IGV (18%):</strong> ${(subtotal * 0.18):.2f}<br>
-            <hr>
-            <h3>COSTO FINAL EN USD: ${final_price:.2f}</h3>
+            <p>Subtotal (antes de IGV): ${subtotal:.2f} USD</p>
+            <p>IGV (18%): ${subtotal * 0.18:.2f} USD</p>
+            <p><strong>Precio Final: ${final_price:.2f} USD</strong></p>
             """
 
         except ValueError:
-            flash("Por favor, ingresa valores numéricos válidos en todos los campos.")
+            flash("Por favor, ingresa valores numéricos válidos para todos los campos.")
 
     return render_template("index.html", form_data=form_data, result=result)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
