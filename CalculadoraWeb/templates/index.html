@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Calculadora de Costos - Estilo Premium</title>
+  <!-- Fuente moderna de Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reinicio básico y box sizing */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #7F7FD5, #86A8E7, #91EAE4);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin-bottom: 10px;
+    }
+    p.description {
+      text-align: center;
+      font-size: 16px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #555;
+    }
+    form input[type="text"],
+    form input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
+    form input[type="text"]:focus,
+    form input[type="number"]:focus {
+      border-color: #86A8E7;
+      outline: none;
+    }
+    form input[type="checkbox"] {
+      margin-right: 8px;
+      transform: scale(1.2);
+    }
+    form button {
+      width: 100%;
+      padding: 14px;
+      background: #4a90e2;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+    form button:hover {
+      background: #3a78c2;
+    }
+    .result {
+      margin-top: 25px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e1e1e1;
+      line-height: 1.7;
+      font-size: 16px;
+      color: #444;
+    }
+    .error {
+      background: #fdecea;
+      color: #e74c3c;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Calculadora de Costos</h1>
+    <p class="description">Calcula el costo final con impuestos, envíos y servicios de aduanas.</p>
+
+    <!-- Mostrar mensajes de error -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="error">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <label for="precio_inicial">Precio Inicial del producto (USD):</label>
+      <input type="text" id="precio_inicial" name="precio_inicial" value="{{ form_data.precio_inicial }}" placeholder="Ej: 180" required>
+
+      <label for="envio_usa">Envío USA a Paquetería (USD):</label>
+      <input type="text" id="envio_usa" name="envio_usa" value="{{ form_data.envio_usa }}" placeholder="Ej: 8" required>
+
+      <label for="peso_paquete">Peso del paquete (kg):</label>
+      <input type="text" id="peso_paquete" name="peso_paquete" value="{{ form_data.peso_paquete }}" placeholder="Ej: 1.2" required>
+
+      <label>
+        <input type="checkbox" name="aplicar_tax7" {% if form_data.aplicar_tax7 %}checked{% endif %}>
+        Aplicar Tax del 7% sobre el Precio Inicial
+      </label>
+
+      <button type="submit">Calcular</button>
+    </form>
+
+    {% if result %}
+      <div class="result">
+        {{ result|safe }}
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
